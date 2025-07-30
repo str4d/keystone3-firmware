@@ -14,6 +14,7 @@ use pczt::{
 };
 use transparent::sighash::SignableInput;
 use zcash_protocol::value::ZatBalance;
+use zcash_script::script::Parsable;
 
 /// TxId tree root personalization
 const ZCASH_TX_PERSONALIZATION_PREFIX: &[u8; 12] = b"ZcashTxHash_";
@@ -364,9 +365,10 @@ fn transparent_sig_digest(pczt: &Pczt, input_info: Option<SignableInput>) -> Has
             ch.update(input.prevout_txid());
             ch.update(&input.prevout_index().to_le_bytes());
             ch.update(&signable_input.value().to_i64_le_bytes());
-            let len = signable_input.script_pubkey().0.len();
+            let script_pubkey = signable_input.script_pubkey().to_bytes();
+            let len = script_pubkey.len();
             ch.update(&[len as u8]);
-            ch.update(&signable_input.script_pubkey().0);
+            ch.update(&script_pubkey);
             ch.update(&input.sequence().unwrap_or(0xffffffff).to_le_bytes());
         }
         let txin_sig_digest = ch.finalize();

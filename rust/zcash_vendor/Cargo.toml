@@ -50,6 +50,7 @@ zcash_address = { version = "0.8", default-features = false }
 zcash_encoding = { version = "0.3", default-features = false }
 zcash_keys = { version = "0.9", default-features = false, features = ["orchard", "transparent-inputs"] }
 zcash_protocol = { version = "0.5", default-features = false }
+zcash_script = { version = "0.2", default-features = false }
 zip32 = { version = "0.2", default-features = false }
 rust_tools = { workspace = true }
 #zcash end
