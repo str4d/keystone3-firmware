@@ -64,6 +64,10 @@ pub extern "C" fn generate_zcash_default_address(
     }
 }
 
+/// The core logic of the `CheckUrResultHandler` for Zcash (`GuiGetZcashCheckResult`).
+///
+/// The handler is called from `GuiScanResult` via `ModelCheckTransaction`, and validates
+/// that the scanned UR contains a PCZT that is valid for the given UFVK.
 #[no_mangle]
 pub extern "C" fn check_zcash_tx(
     tx: PtrUR,
@@ -94,6 +98,12 @@ pub extern "C" fn check_zcash_tx(
     }
 }
 
+/// The core logic of the `GetChainDataFunc` for Zcash (`GuiGetZcashGUIData`).
+///
+/// This is called via `GuiTransactionDetailInit`, which is triggered when the
+/// `g_transactionDetailView` screen is opened by `GuiTransactionCheckPass`. As such, it
+/// can assume that all automated checks performed by `check_zcash_tx` have passed, and
+/// only needs to display information that the user requires for their manual checks.
 #[no_mangle]
 pub extern "C" fn parse_zcash_tx(
     tx: PtrUR,
@@ -110,6 +120,17 @@ pub extern "C" fn parse_zcash_tx(
     }
 }
 
+/// The core logic of the `GenerateUR` handler for Zcash (`GuiGetZcashSignQrCodeData`).
+///
+/// The handler is called via `GuiCreateSignatureQRCode`, which is triggered when the
+/// `g_transactionSignatureView` screen is opened by
+/// `GuiTransactionDetailVerifyPasswordSuccess`. As such, it can assume that all automated
+/// checks performed by `check_zcash_tx` have passed, and the user has authorized the
+/// transaction after performing their manual checks.
+//
+// TODO(str4d): While figuring out what this was supposed to do, I came across
+// `g_multisigTransactionSignatureView` as part of BTC multisig support. Does Zcash also
+// need to use this view for its P2SH multisig support?
 #[no_mangle]
 pub extern "C" fn sign_zcash_tx(tx: PtrUR, seed: PtrBytes, seed_len: u32) -> *mut UREncodeResult {
     let pczt = extract_ptr_with_type!(tx, ZcashPczt);
