@@ -8,3 +8,4 @@
 	path = keystone3-firmware-release
 	url = git@github.com:KeystoneHQ/keystone3-firmware-release.git
 	branch = fix-build-monero
+	update = none
